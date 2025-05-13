@@ -1,0 +1,54 @@
+
+Table specialties {
+  specialty_id int [pk, increment]
+  name varchar(100) [unique, not null]
+}
+
+Table doctors {
+  doctor_id int [pk, increment]
+  full_name varchar(100) [not null]
+  email varchar(100) [unique, not null]
+  phone varchar(20)
+  specialty_id int
+  Ref: specialty_id > specialties.specialty_id
+}
+
+Table patients {
+  patient_id int [pk, increment]
+  full_name varchar(100) [not null]
+  date_of_birth date
+  gender enum('Male', 'Female', 'Other')
+  phone varchar(20) [not null]
+  email varchar(100) [unique]
+}
+
+Table appointments {
+  appointment_id int [pk, increment]
+  patient_id int [not null]
+  doctor_id int [not null]
+  appointment_date datetime [not null]
+  reason text
+  Ref: patient_id > patients.patient_id
+  Ref: doctor_id > doctors.doctor_id
+  Indexes {
+    (patient_id, doctor_id, appointment_date) [unique]
+  }
+}
+
+Table medical_records {
+  record_id int [pk, increment]
+  appointment_id int [not null, unique]
+  symptoms text [not null]
+  diagnosis text [not null]
+  notes text
+  Ref: appointment_id > appointments.appointment_id
+}
+
+Table prescriptions {
+  prescription_id int [pk, increment]
+  record_id int [not null, unique]
+  medication_name varchar(100) [not null]
+  dosage varchar(50) [not null]
+  instructions text
+  Ref: record_id > medical_records.record_id
+}
